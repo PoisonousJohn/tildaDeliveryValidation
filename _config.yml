@@ -1,0 +1,10 @@
+exclude:
+  - src
+  - .eslintrc
+  - .gitignore
+  - package.json
+  - package-lock.json
+  - README.md
+  - tsconfig.json
+  - webpack.config.js
+  - karma.conf.js

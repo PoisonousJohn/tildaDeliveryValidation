@@ -1,17 +1,18 @@
 {
-    "compileOnSave": true,
-    "compilerOptions": {
-        "moduleResolution": "Node",
-        "allowSyntheticDefaultImports": true,
-        "module": "CommonJS",
-        "target": "ES5",
-        "lib": [
-            "es2017",
-            "dom"
-        ],
-        "noImplicitAny": true,
-        "removeComments": true,
-        "preserveConstEnums": true,
-        "sourceMap": true
-    }
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "ES5",
+    "module": "commonjs",
+    "outDir": "lib",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "noImplicitAny": true,
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules",
+    "test"
+  ]
 }

@@ -7,17 +7,17 @@ class Errors {
 }
 
 export class Config {
-    timeDeliveryToggleName: "Хотите получить заказ как можно скорее или к определенному времени"
-    timeDeliveryVisibleValue: "К определенному времени"
-    timeInputName: "Время доставки ТОЛЬКО С 12:00"
-    dateInputName: "Дата доставки "
-    orderStartTime: "12:00"
-    orderEndTime: "22:30"
-    orderStartEndTimeError: "Мы принимаем заказы с 12:00 до 22:30"
-    minOrderPreparationTimeMinutes: 90
-    minTimeError: "Для приготовления заказа нужно минимум 90 минут."
-    incorrectDateError: "Пожалуйста введите дату в формате ДД-ММ-ГГГГ"
-    incorrectTimeError: "Пожалуйста введите время в формате ЧЧ:ММ"
+    timeDeliveryToggleName = "Хотите получить заказ как можно скорее или к определенному времени"
+    timeDeliveryVisibleValue = "К определенному времени"
+    timeInputName = "Время доставки ТОЛЬКО С 12:00"
+    dateInputName = "Дата доставки "
+    orderStartTime = "12:00"
+    orderEndTime = "22:30"
+    orderStartEndTimeError = "Мы принимаем заказы с 12:00 до 22:30"
+    minOrderPreparationTimeMinutes = 90
+    minTimeError = "Для приготовления заказа нужно минимум 90 минут."
+    incorrectDateError = "Пожалуйста введите дату в формате ДД-ММ-ГГГГ"
+    incorrectTimeError = "Пожалуйста введите время в формате ЧЧ:ММ"
 }
 
 export class DeliveryValidation {
@@ -120,13 +120,11 @@ export class DeliveryValidation {
     }
 
     onChangeDistinct(el: JQuery<any>, callback: (el: JQuery<any>, val: string) => void) {
-        this.getDateInput()
-        el.keyup(function (event) {
-            let input = jQuery(this);
-            let val = input.val();
+        el.keyup(() => {
+            let val = el.val();
 
-            if (input.data("lastval") != val) {
-                input.data("lastval", val);
+            if (el.data("lastval") != val) {
+                el.data("lastval", val);
                 callback(el, val.toString());
             }
         });
@@ -155,11 +153,11 @@ export class DeliveryValidation {
 
     onReady() {
         let timeInput = this.getTimeInput();
-        this.onChangeDistinct(timeInput, this.validateForm);
+        this.onChangeDistinct(timeInput, () => { this.validateForm(); });
         let dateInput = this.getDateInput();
-        let callback = this.validateForm
+        let callback = () => { this.validateForm(); }
         dateInput.blur(() => setTimeout(callback, 100));
-        this.onChangeDistinct(dateInput, this.validateForm)
+        this.onChangeDistinct(dateInput, () => { this.validateForm(); })
 
         jQuery('.t-submit').click((event) => {
             this.validateForm();
@@ -170,10 +168,8 @@ export class DeliveryValidation {
                 return false;
             }
         });
-        let updateFieldsVisibility = this.updateFieldsVisibility;
-        this.getVisibilityToggle().each(function () {
-            jQuery(this).on('change', updateFieldsVisibility);
-        });
+        let updateFieldsVisibility = () => this.updateFieldsVisibility();
+        this.getVisibilityToggle().each(() => { jQuery(this).on('change', updateFieldsVisibility); });
         this.updateFieldsVisibility();
         this.validateForm();
         this.getDateInput().attr('data-mindate', moment().format('YYYY-MM-DD'));
