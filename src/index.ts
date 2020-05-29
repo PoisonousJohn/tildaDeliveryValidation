@@ -91,9 +91,6 @@ export class DeliveryValidation {
             let parsedTimeOnly = moment(parsedTime.format('HH:mm'), 'HH:mm');
             let isInRange = parsedTimeOnly.isBetween(startTime, endTime) || parsedTimeOnly.isSame(startTime) || parsedTimeOnly.isSame(endTime);
             let minTime = currentTime.add(this.config.minOrderPreparationTimeMinutes, 'minutes');
-            console.log(JSON.stringify({
-                parsedTime, startTime, endTime, parsedTimeOnly, minTime
-            }));
             let isPreparationTimeSatisfied = parsedTime.isAfter(minTime);
             this.errors.time = !isInRange ? this.config.orderStartEndTimeError : null;
             if (!this.errors.time) {
@@ -169,7 +166,7 @@ export class DeliveryValidation {
             }
         });
         let updateFieldsVisibility = () => this.updateFieldsVisibility();
-        this.getVisibilityToggle().each(() => { jQuery(this).on('change', updateFieldsVisibility); });
+        this.getVisibilityToggle().each(function () { jQuery(this).on('change', () => updateFieldsVisibility()); });
         this.updateFieldsVisibility();
         this.validateForm();
         this.getDateInput().attr('data-mindate', moment().format('YYYY-MM-DD'));
