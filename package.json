@@ -2,7 +2,7 @@
   "name": "tildadeliveryvalidation",
   "version": "1.0.0",
   "description": "Adds validation capabilities of the delivery time, considering minimal order preparation tme",
-  "main": "index.js",
+  "main": "src/tildadeliveryvalidation.js",
   "scripts": {
     "build": "tsc"
   },
