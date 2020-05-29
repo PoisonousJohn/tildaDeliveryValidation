@@ -1,0 +1,23 @@
+{
+  "name": "tildadeliveryvalidation",
+  "version": "1.0.0",
+  "description": "Adds validation capabilities of the delivery time, considering minimal order preparation tme",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PoisonousJohn/tildaDeliveryValidation.git"
+  },
+  "author": "PoisonousJohn",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/PoisonousJohn/tildaDeliveryValidation/issues"
+  },
+  "homepage": "https://github.com/PoisonousJohn/tildaDeliveryValidation#readme",
+  "devDependencies": {
+    "@types/jquery": "^3.3.38",
+    "moment": "^2.26.0"
+  }
+}
