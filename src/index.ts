@@ -174,4 +174,11 @@ export class DeliveryValidation {
         this.validateForm();
         this.getDateInput().attr('data-mindate', moment().format('YYYY-MM-DD'));
     }
+
+    setup(config: Config) {
+        if (config) this.config = config;
+        jQuery(document).ready(() => {
+            this.onReady();
+        });
+    }
 }
