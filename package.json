@@ -2,10 +2,10 @@
   "name": "tildadeliveryvalidation",
   "version": "1.0.0",
   "description": "Adds validation capabilities of the delivery time, considering minimal order preparation tme",
-  "main": "src/tildadeliveryvalidation.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && npx webpack"
   },
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PoisonousJohn/tildaDeliveryValidation.git"
@@ -16,9 +16,13 @@
     "url": "https://github.com/PoisonousJohn/tildaDeliveryValidation/issues"
   },
   "homepage": "https://github.com/PoisonousJohn/tildaDeliveryValidation#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
   "dependencies": {
     "@types/jquery": "^3.3.38",
+    "jquery": "^3.5.1",
     "moment": "^2.26.0",
     "requirejs": "^2.3.6"
   }
