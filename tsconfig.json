@@ -3,7 +3,7 @@
     "compilerOptions": {
         "moduleResolution": "Node",
         "allowSyntheticDefaultImports": true,
-        "module": "umd",
+        "module": "ES2015",
         "lib": [
             "es2017",
             "dom"
