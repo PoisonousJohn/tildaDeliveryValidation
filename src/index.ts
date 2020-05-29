@@ -148,6 +148,10 @@ export class DeliveryValidation {
         return jQuery('input[name="' + this.config.dateInputName + '"]');
     }
 
+    onFormSubmit() {
+
+    }
+
     onReady() {
         let timeInput = this.getTimeInput();
         this.onChangeDistinct(timeInput, () => { this.validateForm(); });
@@ -157,13 +161,20 @@ export class DeliveryValidation {
         this.onChangeDistinct(dateInput, () => { this.validateForm(); })
 
         jQuery('.t-submit').click((event) => {
+            if (!this.isTimeValidationRequired()) {
+                this.getDateInput().val('');
+                this.getTimeInput().val('');
+                return;
+            }
             this.validateForm();
             this.validateRequiredFields();
             if (this.hasErrors()) {
+                console.log('stop propagation');
                 event.stopPropagation();
                 this.getTimeInput().focus();
-                return false;
+                return;
             }
+            console.log('no errors');
         });
         let updateFieldsVisibility = () => this.updateFieldsVisibility();
         this.getVisibilityToggle().each(function () { jQuery(this).on('change', () => updateFieldsVisibility()); });
