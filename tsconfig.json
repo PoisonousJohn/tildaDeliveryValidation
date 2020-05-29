@@ -1,7 +1,9 @@
 {
     "compileOnSave": true,
     "compilerOptions": {
-        "module": "commonjs",
+        "moduleResolution": "Node",
+        "allowSyntheticDefaultImports": true,
+        "module": "umd",
         "lib": [
             "es2017",
             "dom"

@@ -16,8 +16,10 @@
     "url": "https://github.com/PoisonousJohn/tildaDeliveryValidation/issues"
   },
   "homepage": "https://github.com/PoisonousJohn/tildaDeliveryValidation#readme",
-  "devDependencies": {
+  "devDependencies": {},
+  "dependencies": {
     "@types/jquery": "^3.3.38",
-    "moment": "^2.26.0"
+    "moment": "^2.26.0",
+    "requirejs": "^2.3.6"
   }
 }

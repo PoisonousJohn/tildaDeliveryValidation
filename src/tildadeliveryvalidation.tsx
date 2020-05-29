@@ -1,5 +1,5 @@
 import jQuery = require("jquery");
-import * as moment from 'moment'
+import moment = require('moment');
 
 class Errors {
     time: string
