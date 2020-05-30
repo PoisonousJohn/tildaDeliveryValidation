@@ -14,8 +14,8 @@ export class Config {
     orderStartTime = "12:00"
     orderEndTime = "22:30"
     orderStartEndTimeError = "Мы принимаем заказы с 12:00 до 22:30"
-    minOrderPreparationTimeMinutes = 90
-    minTimeError = "Для приготовления заказа нужно минимум 90 минут."
+    minOrderPreparationTimeMinutes = 60
+    minTimeError = "Для приготовления заказа нужно минимум 60 минут."
     incorrectDateError = "Пожалуйста введите дату в формате ДД-ММ-ГГГГ"
     incorrectTimeError = "Пожалуйста введите время в формате ЧЧ:ММ"
 }
