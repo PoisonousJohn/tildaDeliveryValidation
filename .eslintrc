@@ -1,11 +1,26 @@
 {
+  "root": true,
   "parser": "babel-eslint",
-  "extends": "airbnb",
   "globals": {
     "__DEV__": true
   },
   "rules": {
     "react/jsx-quotes": 0,
-    "jsx-quotes": [2, "prefer-double"]
+    "jsx-quotes": [
+      2,
+      "prefer-double"
+    ],
+    "no-unexpected-multiline": "error",
+    "semi": [
+      "error",
+      "never",
+      {
+        "beforeStatementContinuationChars": "always"
+      }
+    ],
+    "semi-style": [
+      "error",
+      "first"
+    ]
   }
 }

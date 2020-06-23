@@ -26,6 +26,8 @@
     "@types/chai": "^3.4.35",
     "@types/jquery": "^3.3.38",
     "@types/mocha": "^2.2.40",
+    "eslint": "^7.1.0",
+    "babel-eslint": "^10.1.0",
     "awesome-typescript-loader": "^3.1.2",
     "chai": "^3.5.0",
     "karma": "^1.5.0",
