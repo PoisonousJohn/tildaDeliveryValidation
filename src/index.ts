@@ -1,6 +1,7 @@
-import * as jQuery from "jquery";
-import * as moment from 'moment';
+import * as jQuery from "jquery"
+import * as moment from 'moment'
 
+declare function t868_showPopup(recId: string, customCodeHTML: string): void
 class Errors {
     time: string
     date: string
@@ -18,6 +19,9 @@ export class Config {
     minTimeError = "Для приготовления заказа нужно минимум 60 минут."
     incorrectDateError = "Пожалуйста введите дату в формате ДД-ММ-ГГГГ"
     incorrectTimeError = "Пожалуйста введите время в формате ЧЧ:ММ"
+    ASAPDeliveryError =
+        '<p style="padding: 2em;>Вы заказываете в не рабочее время, доставка осуществляется с 11:30-22:30</p>'
+    errorPopupId = ""
 }
 
 export class DeliveryValidation {
@@ -29,123 +33,129 @@ export class DeliveryValidation {
     }
 
     isTimeValid() {
-        let val = this.getTimeInput().val();
-        if (!val || val.toString().includes('_')) return true;
-        return moment(val, 'HH:mm').isValid();
+        let val = this.getTimeInput().val()
+        if (!val || val.toString().includes('_')) return true
+        return moment(val, 'HH:mm').isValid()
     }
 
     isDateValid() {
-        let val = this.getDateInput().val();
-        if (!val || val.toString().includes('_')) return true;
-        return moment(val, 'DD-MM-YYYY').isValid();
+        let val = this.getDateInput().val()
+        if (!val || val.toString().includes('_')) return true
+        return moment(val, 'DD-MM-YYYY').isValid()
     }
 
     showErrors() {
-        this.showInputError(this.getTimeInput(), this.errors.time);
-        this.showInputError(this.getDateInput(), this.errors.date);
+        this.showInputError(this.getTimeInput(), this.errors.time)
+        this.showInputError(this.getDateInput(), this.errors.date)
     }
 
     validateFormat() {
-        this.errors.date = !this.isDateValid() ? this.config.incorrectDateError : null;
-        this.errors.time = !this.isTimeValid() ? this.config.incorrectTimeError : null;
+        this.errors.date = !this.isDateValid() ? this.config.incorrectDateError : null
+        this.errors.time = !this.isTimeValid() ? this.config.incorrectTimeError : null
     }
 
     isDateEmpty() {
-        let val = this.getDateInput().val();
-        return !val || val.toString().includes('_');
+        let val = this.getDateInput().val()
+        return !val || val.toString().includes('_')
     }
 
     isTimeEmpty() {
-        let val = this.getTimeInput().val();
-        return !val || val.toString().includes('_');
+        let val = this.getTimeInput().val()
+        return !val || val.toString().includes('_')
     }
 
     hasErrors() {
-        return this.errors.date || this.errors.time;
+        return this.errors.date || this.errors.time
     }
 
     validateRequiredFields() {
         if (this.isTimeEmpty())
-            this.errors.time = 'Обязательное поле';
+            this.errors.time = 'Обязательное поле'
         if (this.isDateEmpty())
-            this.errors.date = 'Обязательное поле';
-        this.showErrors();
+            this.errors.date = 'Обязательное поле'
+        this.showErrors()
     }
 
     validateForm() {
-        this.clearErrors();
-        this.showErrors();
+        this.clearErrors()
+        this.showErrors()
         if (this.isTimeValidationRequired())
-            this.validateTimeRange();
-        return this.hasErrors();
+            this.validateTimeRange()
+        return this.hasErrors()
     }
 
     validateTimeRange(): void {
-        this.validateFormat();
+        this.validateFormat()
         if (!this.isTimeEmpty() && !this.isDateEmpty() && !this.hasErrors()) {
-            let currentTime = moment();
-            let parsedTime = moment(this.getDateInput().val() + ' ' + this.getTimeInput().val(), 'DD-MM-YYYY HH:mm');
-            if (!parsedTime.isValid()) return null;
-            let startTime = moment(this.config.orderStartTime, 'HH:mm');
-            let endTime = moment(this.config.orderEndTime, 'HH:mm');
-            let parsedTimeOnly = moment(parsedTime.format('HH:mm'), 'HH:mm');
-            let isInRange = parsedTimeOnly.isBetween(startTime, endTime) || parsedTimeOnly.isSame(startTime) || parsedTimeOnly.isSame(endTime);
-            let minTime = currentTime.add(this.config.minOrderPreparationTimeMinutes, 'minutes');
-            let isPreparationTimeSatisfied = parsedTime.isAfter(minTime);
-            this.errors.time = !isInRange ? this.config.orderStartEndTimeError : null;
+            let currentTime = moment()
+            let parsedTime = moment(this.getDateInput().val() + ' ' + this.getTimeInput().val(), 'DD-MM-YYYY HH:mm')
+            if (!parsedTime.isValid()) return null
+            let startTime = moment(this.config.orderStartTime, 'HH:mm')
+            let endTime = moment(this.config.orderEndTime, 'HH:mm')
+            let parsedTimeOnly = moment(parsedTime.format('HH:mm'), 'HH:mm')
+            let isInRange = parsedTimeOnly.isBetween(startTime, endTime) || parsedTimeOnly.isSame(startTime)
+                || parsedTimeOnly.isSame(endTime)
+            let minTime = currentTime.add(this.config.minOrderPreparationTimeMinutes, 'minutes')
+            let isPreparationTimeSatisfied = parsedTime.isAfter(minTime)
+            this.errors.time = !isInRange ? this.config.orderStartEndTimeError : null
             if (!this.errors.time) {
-                this.errors.time = !isPreparationTimeSatisfied ? this.config.minTimeError : null;
+                this.errors.time = !isPreparationTimeSatisfied ? this.config.minTimeError : null
             }
         }
-        this.showErrors();
+        this.showErrors()
     }
 
     isTimeValidationRequired() {
-        return this.getVisibilityToggle().filter(':checked').val() == this.config.timeDeliveryVisibleValue;
+        return this.getVisibilityToggle().filter(':checked').val() == this.config.timeDeliveryVisibleValue
     }
 
     updateFieldsVisibility() {
-        let visible = this.isTimeValidationRequired();
+        let visible = this.isTimeValidationRequired()
         if (visible) {
-            this.getTimeInput().parents('.t-input-group').show();
-            this.getDateInput().parents('.t-input-group').show();
+            this.getTimeInput().parents('.t-input-group').show()
+            this.getDateInput().parents('.t-input-group').show()
         }
         else {
-            this.getTimeInput().parents('.t-input-group').hide();
-            this.getDateInput().parents('.t-input-group').hide();
+            this.getTimeInput().parents('.t-input-group').hide()
+            this.getDateInput().parents('.t-input-group').hide()
         }
+    }
+
+    checkIfASAPDeliveryPossible() {
+        if (this.isTimeValidationRequired() || this.config.errorPopupId === "") return
+        t868_showPopup(this.config.errorPopupId, this.config.ASAPDeliveryError)
     }
 
     onChangeDistinct(el: JQuery<any>, callback: (el: JQuery<any>, val: string) => void) {
         el.keyup(() => {
-            let val = el.val();
+            let val = el.val()
 
             if (el.data("lastval") != val) {
-                el.data("lastval", val);
-                callback(el, val.toString());
+                el.data("lastval", val)
+                callback(el, val.toString())
             }
-        });
+        })
     }
 
     showInputError(el: JQuery<any>, error: string) {
-        let errorControl = jQuery(el).parents('.t-input-group');
+        let errorControl = jQuery(el).parents('.t-input-group')
         if (error)
-            errorControl.addClass('js-error-control-box');
+            errorControl.addClass('js-error-control-box')
         else
-            errorControl.removeClass('js-error-control-box');
-        el.next().text(error);
+            errorControl.removeClass('js-error-control-box')
+        el.next().text(error)
     }
 
     getVisibilityToggle() {
-        return jQuery('[name="' + this.config.timeDeliveryToggleName + '"]');
+        return jQuery('[name="' + this.config.timeDeliveryToggleName + '"]')
     }
 
     getTimeInput() {
-        return jQuery('input[name="' + this.config.timeInputName + '"]');
+        return jQuery('input[name="' + this.config.timeInputName + '"]')
     }
 
     getDateInput() {
-        return jQuery('input[name="' + this.config.dateInputName + '"]');
+        return jQuery('input[name="' + this.config.dateInputName + '"]')
     }
 
     onFormSubmit() {
@@ -153,40 +163,40 @@ export class DeliveryValidation {
     }
 
     onReady() {
-        let timeInput = this.getTimeInput();
-        this.onChangeDistinct(timeInput, () => { this.validateForm(); });
-        let dateInput = this.getDateInput();
-        let callback = () => { this.validateForm(); }
-        dateInput.blur(() => setTimeout(callback, 100));
-        this.onChangeDistinct(dateInput, () => { this.validateForm(); })
+        let timeInput = this.getTimeInput()
+        this.onChangeDistinct(timeInput, () => { this.validateForm() })
+        let dateInput = this.getDateInput()
+        let callback = () => { this.validateForm() }
+        dateInput.blur(() => setTimeout(callback, 100))
+        this.onChangeDistinct(dateInput, () => { this.validateForm() })
 
         jQuery('.t-submit').click((event) => {
             if (!this.isTimeValidationRequired()) {
-                this.getDateInput().val('');
-                this.getTimeInput().val('');
-                return;
+                this.getDateInput().val('')
+                this.getTimeInput().val('')
+                return
             }
-            this.validateForm();
-            this.validateRequiredFields();
+            this.validateForm()
+            this.validateRequiredFields()
             if (this.hasErrors()) {
-                console.log('stop propagation');
-                event.stopPropagation();
-                this.getTimeInput().focus();
-                return;
+                console.log('stop propagation')
+                event.stopPropagation()
+                this.getTimeInput().focus()
+                return
             }
-            console.log('no errors');
-        });
-        let updateFieldsVisibility = () => this.updateFieldsVisibility();
-        this.getVisibilityToggle().each(function () { jQuery(this).on('change', () => updateFieldsVisibility()); });
-        this.updateFieldsVisibility();
-        this.validateForm();
-        this.getDateInput().attr('data-mindate', moment().format('YYYY-MM-DD'));
+            console.log('no errors')
+        })
+        let updateFieldsVisibility = () => this.updateFieldsVisibility()
+        this.getVisibilityToggle().each(function () { jQuery(this).on('change', () => updateFieldsVisibility()) })
+        this.updateFieldsVisibility()
+        this.validateForm()
+        this.getDateInput().attr('data-mindate', moment().format('YYYY-MM-DD'))
     }
 
     setup(config: Config) {
-        if (config) this.config = config;
+        if (config) this.config = config
         jQuery(document).ready(() => {
-            this.onReady();
-        });
+            this.onReady()
+        })
     }
 }
