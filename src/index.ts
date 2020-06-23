@@ -12,15 +12,17 @@ export class Config {
     timeDeliveryVisibleValue = "К определенному времени"
     timeInputName = "Время доставки ТОЛЬКО С 12:00"
     dateInputName = "Дата доставки "
-    orderStartTime = "12:00"
+    orderStartTime = "11:30"
     orderEndTime = "22:30"
-    orderStartEndTimeError = "Мы принимаем заказы с 12:00 до 22:30"
-    minOrderPreparationTimeMinutes = 60
-    minTimeError = "Для приготовления заказа нужно минимум 60 минут."
+    orderStartEndTimeError = "Мы принимаем заказы"
+    minOrderPreparationTimeMinutes = 30
+    minTimeError = "Для приготовления заказа нужно минимум"
     incorrectDateError = "Пожалуйста введите дату в формате ДД-ММ-ГГГГ"
     incorrectTimeError = "Пожалуйста введите время в формате ЧЧ:ММ"
-    ASAPDeliveryError =
-        '<p style="padding: 2em;>Вы заказываете в не рабочее время, доставка осуществляется с 11:30-22:30</p>'
+    fromString = "с"
+    untilString = "до"
+    minutesString = "минут"
+    ASAPDeliveryError = 'Вы заказываете в не рабочее время, доставка осуществляется'
     errorPopupId = ""
 }
 
@@ -30,6 +32,32 @@ export class DeliveryValidation {
 
     clearErrors() {
         this.errors = new Errors()
+    }
+
+    /**
+     * Error text when the user chooses time earlier than order can be prepared and delivered
+     */
+    getMinTimeError() {
+        return `${this.getMinTimeError} ${this.config.minOrderPreparationTimeMinutes} ${this.config.minutesString}`
+    }
+
+    /**
+     * Error text when the user chooses ASAP delivery, but outside of working hours
+     */
+    getASAPDeliveryError() {
+        return `<p style="padding: 2em;">${this.config.ASAPDeliveryError} ${this.getWorkingHoursString()}</p>`
+    }
+
+    getWorkingHoursString() {
+        let c = this.config
+        return `${c.fromString} ${c.orderStartTime} ${c.untilString} ${c.orderEndTime}`
+    }
+
+    /**
+     * Error text when the order custom delivery time is not in the valid range
+     */
+    getOrderTimeError() {
+        return `${this.config.orderStartEndTimeError} ${this.getWorkingHoursString()}`
     }
 
     isTimeValid() {
@@ -84,22 +112,52 @@ export class DeliveryValidation {
         return this.hasErrors()
     }
 
+    isInRange(time: moment.Moment, start: moment.Moment, end: moment.Moment): Boolean {
+        return time.isBetween(start, end, null, "[]")
+    }
+
+    parseTime(time: string): moment.Moment {
+        return moment(time, 'HH:mm')
+    }
+
+    /**
+     * When we start accepting orders
+     */
+    getOrderStartTime(): moment.Moment {
+        return this.parseTime(this.config.orderStartTime)
+    }
+
+    /**
+     * When we end accepting orders
+     */
+    getOrderEndTime(): moment.Moment {
+        return this.parseTime(this.config.orderEndTime)
+    }
+
+    /**
+     * Minimum time when an order can delivered at, considering min preparation time, starting from now
+     */
+    getMinCustomDeliveryTime(): moment.Moment {
+        return moment().add(this.config.minOrderPreparationTimeMinutes, 'minutes')
+    }
+
     validateTimeRange(): void {
         this.validateFormat()
         if (!this.isTimeEmpty() && !this.isDateEmpty() && !this.hasErrors()) {
             let currentTime = moment()
-            let parsedTime = moment(this.getDateInput().val() + ' ' + this.getTimeInput().val(), 'DD-MM-YYYY HH:mm')
-            if (!parsedTime.isValid()) return null
-            let startTime = moment(this.config.orderStartTime, 'HH:mm')
-            let endTime = moment(this.config.orderEndTime, 'HH:mm')
-            let parsedTimeOnly = moment(parsedTime.format('HH:mm'), 'HH:mm')
-            let isInRange = parsedTimeOnly.isBetween(startTime, endTime) || parsedTimeOnly.isSame(startTime)
-                || parsedTimeOnly.isSame(endTime)
-            let minTime = currentTime.add(this.config.minOrderPreparationTimeMinutes, 'minutes')
-            let isPreparationTimeSatisfied = parsedTime.isAfter(minTime)
-            this.errors.time = !isInRange ? this.config.orderStartEndTimeError : null
+            let parsedDateTime = moment(this.getDateInput().val() + ' ' + this.getTimeInput().val(), 'DD-MM-YYYY HH:mm')
+            if (!parsedDateTime.isValid()) return null
+            let startTime = this.getOrderStartTime()
+            let endTime = this.getOrderEndTime()
+            let parsedTime = moment(parsedDateTime.format('HH:mm'), 'HH:mm')
+            let isInRange = this.isInRange(parsedTime, startTime, endTime)
+            // let isInRange = parsedTimeOnly.isBetween(startTime, endTime) || parsedTimeOnly.isSame(startTime)
+            // || parsedTimeOnly.isSame(endTime)
+            let minTime = this.getMinCustomDeliveryTime()
+            let isPreparationTimeSatisfied = parsedDateTime.isAfter(minTime)
+            this.errors.time = !isInRange ? this.getOrderTimeError() : null
             if (!this.errors.time) {
-                this.errors.time = !isPreparationTimeSatisfied ? this.config.minTimeError : null
+                this.errors.time = !isPreparationTimeSatisfied ? this.getMinTimeError() : null
             }
         }
         this.showErrors()
@@ -123,7 +181,8 @@ export class DeliveryValidation {
 
     checkIfASAPDeliveryPossible() {
         if (this.isTimeValidationRequired() || this.config.errorPopupId === "") return
-        t868_showPopup(this.config.errorPopupId, this.config.ASAPDeliveryError)
+        if (!this.isInRange(moment(), this.getOrderStartTime(), this.getOrderEndTime()))
+            t868_showPopup(this.config.errorPopupId, this.getASAPDeliveryError())
     }
 
     onChangeDistinct(el: JQuery<any>, callback: (el: JQuery<any>, val: string) => void) {
@@ -187,7 +246,13 @@ export class DeliveryValidation {
             console.log('no errors')
         })
         let updateFieldsVisibility = () => this.updateFieldsVisibility()
-        this.getVisibilityToggle().each(function () { jQuery(this).on('change', () => updateFieldsVisibility()) })
+        let checkASAPDelivery = () => this.checkIfASAPDeliveryPossible()
+        this.getVisibilityToggle().each(function () {
+            jQuery(this).on('change', () => {
+                updateFieldsVisibility()
+                checkASAPDelivery()
+            })
+        })
         this.updateFieldsVisibility()
         this.validateForm()
         this.getDateInput().attr('data-mindate', moment().format('YYYY-MM-DD'))
