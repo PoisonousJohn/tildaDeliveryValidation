@@ -135,10 +135,18 @@ export class DeliveryValidation {
     }
 
     /**
-     * Minimum time when an order can delivered at, considering min preparation time, starting from now
+     * Minimum time when an order can be delivered on, considering min preparation time
+     * @param date date for which we're calculating a min time in format of DD-MM-YYYY
      */
-    getMinCustomDeliveryTime(): moment.Moment {
-        return moment().add(this.config.minOrderPreparationTimeMinutes, 'minutes')
+    getMinCustomDeliveryTime(date: string): moment.Moment {
+        let now = moment()
+        let parsedDate = moment(`${date} ${this.config.orderStartTime}`, 'DD-MM-YYYY HH:mm')
+        var minTimeForTheDate = parsedDate.add(this.config.minOrderPreparationTimeMinutes, 'minutes')
+        let isToday = parsedDate.isSame(now, 'date')
+        if (isToday && now.isSameOrAfter(minTimeForTheDate)) {
+            return now.add(this.config.minOrderPreparationTimeMinutes, 'minutes')
+        }
+        return minTimeForTheDate
     }
 
     validateTimeRange(): void {
@@ -151,10 +159,8 @@ export class DeliveryValidation {
             let endTime = this.getOrderEndTime()
             let parsedTime = moment(parsedDateTime.format('HH:mm'), 'HH:mm')
             let isInRange = this.isInRange(parsedTime, startTime, endTime)
-            // let isInRange = parsedTimeOnly.isBetween(startTime, endTime) || parsedTimeOnly.isSame(startTime)
-            // || parsedTimeOnly.isSame(endTime)
-            let minTime = this.getMinCustomDeliveryTime()
-            let isPreparationTimeSatisfied = parsedDateTime.isAfter(minTime)
+            let minTime = this.getMinCustomDeliveryTime(parsedDateTime.format('DD-MM-YYYY'))
+            let isPreparationTimeSatisfied = parsedDateTime.isSameOrAfter(minTime)
             this.errors.time = !isInRange ? this.getOrderTimeError() : null
             if (!this.errors.time) {
                 this.errors.time = !isPreparationTimeSatisfied ? this.getMinTimeError() : null

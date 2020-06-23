@@ -5,7 +5,7 @@ module.exports = (function (options) {
 
     return {
         entry: __dirname + "/src/index.ts",
-        mode: 'production',
+        mode: 'development',
         externals: {
             'jquery': 'jQuery'
         },
