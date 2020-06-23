@@ -38,7 +38,7 @@ export class DeliveryValidation {
      * Error text when the user chooses time earlier than order can be prepared and delivered
      */
     getMinTimeError() {
-        return `${this.getMinTimeError} ${this.config.minOrderPreparationTimeMinutes} ${this.config.minutesString}`
+        return `${this.config.minTimeError} ${this.config.minOrderPreparationTimeMinutes} ${this.config.minutesString}`
     }
 
     /**
